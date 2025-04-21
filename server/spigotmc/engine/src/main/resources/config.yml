@@ -36,4 +36,6 @@ conversation:
   keep: true
 
 shop:
+  enable: false
+
   type: EconomyShopGUI
