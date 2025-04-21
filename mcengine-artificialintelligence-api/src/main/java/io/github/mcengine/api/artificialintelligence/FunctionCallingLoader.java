@@ -14,6 +14,7 @@ import java.util.*;
 public class FunctionCallingLoader {
 
     private final List<FunctionRule> mergedRules = new ArrayList<>();
+    private final IShopHandler shopHandler;
 
     public FunctionCallingLoader(Plugin plugin) {
         String dbType = plugin.getConfig().getString("db.type", "json").toLowerCase();
@@ -30,6 +31,14 @@ public class FunctionCallingLoader {
 
         List<FunctionRule> rules = orm.loadFunctionRules();
         if (rules != null) mergedRules.addAll(rules);
+
+        if (plugin.getConfig().getBoolean("shop.enable", true)) {
+            String shopType = plugin.getConfig().getString("shop.type", "EconomyShopGUI");
+            switch (shopType.toLowerCase()) {
+                case "economyshopgui" -> this.shopHandler = new EconomyShopGUIHandler();
+                default -> this.shopHandler = new EconomyShopGUIHandler();
+            }
+        }
     }
 
     public List<String> match(Player player, String input) {
