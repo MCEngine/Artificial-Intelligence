@@ -4,9 +4,11 @@ import io.github.mcengine.api.artificialintelligence.functions.calling.FunctionR
 import io.github.mcengine.api.artificialintelligence.functions.calling.IFunctionCallingLoader;
 import io.github.mcengine.api.artificialintelligence.functions.calling.json.FunctionCallingJson;
 import io.github.mcengine.api.artificialintelligence.functions.calling.FunctionCallingLoaderTime;
+import io.github.mcengine.api.artificialintelligence.functions.calling.FunctionCallingLoaderMCItem;
 import io.github.mcengine.api.artificialintelligence.shop.IShopHandler;
 import io.github.mcengine.api.artificialintelligence.shop.economyshopgui.EconomyShopGUIHandler;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -54,6 +56,7 @@ public class FunctionCallingLoader {
             for (String pattern : rule.match) {
                 String lowerPattern = pattern.toLowerCase();
                 if (lowerInput.contains(lowerPattern) || lowerPattern.contains(lowerInput)) {
+                    // Check for auto-buy format: e.g., "buy diamond 3"
                     if (lowerInput.startsWith("buy ")) {
                         String[] parts = lowerInput.split("\\s+");
                         if (parts.length >= 2) {
@@ -68,10 +71,14 @@ public class FunctionCallingLoader {
                                 }
                             }
 
-                            if (shopHandler != null && shopHandler.buy(player, item, amount)) {
-                                results.add("✅ Bought " + amount + " " + item);
+                            // Use alias map to resolve Material and get the official name
+                            Material mat = FunctionCallingLoaderMCItem.MATERIAL_ALIASES.get(item.toLowerCase());
+                            String resolvedName = mat != null ? mat.name() : item;
+
+                            if (shopHandler != null && shopHandler.buy(player, resolvedName, amount)) {
+                                results.add("✅ Bought " + amount + " " + resolvedName.toLowerCase().replace("_", " "));
                             } else {
-                                results.add("❌ Failed to buy " + amount + " " + item);
+                                results.add("❌ Failed to buy " + amount + " " + resolvedName.toLowerCase().replace("_", " "));
                             }
                             return results;
                         }
