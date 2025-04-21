@@ -52,43 +52,41 @@ public class FunctionCallingLoader {
         List<String> results = new ArrayList<>();
         String lowerInput = input.toLowerCase().trim();
 
-        // Replace item placeholders like {diamond} → DIAMOND
-        lowerInput = FunctionCallingLoaderMCItem.applyMaterialPlaceholders(lowerInput);
+        // Try to handle flexible buy commands like "buy 5 diamond" or "buy diamond 5"
+        if (lowerInput.contains("buy")) {
+            String[] words = lowerInput.replaceAll("[^a-zA-Z0-9 ]", "").split("\\s+");
+            int amount = 1;
+            String itemName = null;
 
+            for (String word : words) {
+                if (word.matches("\\d+")) {
+                    amount = Integer.parseInt(word);
+                } else {
+                    String matchedAlias = matchAlias(word);
+                    if (matchedAlias != null) {
+                        itemName = matchedAlias;
+                    }
+                }
+            }
+
+            if (itemName != null) {
+                Material material = FunctionCallingLoaderMCItem.MATERIAL_ALIASES.get(itemName);
+                if (material != null && shopHandler != null) {
+                    boolean success = shopHandler.buy(player, material.name(), amount);
+                    if (success) {
+                        results.add("✅ Bought " + amount + " " + material.name().toLowerCase().replace("_", " "));
+                    } else {
+                        results.add("❌ Failed to buy " + amount + " " + material.name().toLowerCase().replace("_", " "));
+                    }
+                    return results;
+                }
+            }
+        }
+
+        // Fallback: simple contains match
         for (FunctionRule rule : mergedRules) {
             for (String pattern : rule.match) {
-                String lowerPattern = FunctionCallingLoaderMCItem.applyMaterialPlaceholders(pattern.toLowerCase());
-
-                if (lowerInput.contains(lowerPattern) || lowerPattern.contains(lowerInput)) {
-                    // Check for auto-buy format
-                    if (lowerInput.startsWith("buy ")) {
-                        String[] parts = lowerInput.split("\\s+");
-                        if (parts.length >= 2) {
-                            String item = parts[1];
-                            int amount = 1;
-
-                            if (parts.length >= 3) {
-                                try {
-                                    amount = Integer.parseInt(parts[2]);
-                                } catch (NumberFormatException e) {
-                                    amount = 1;
-                                }
-                            }
-
-                            // Try to resolve input using alias map (even if already uppercased)
-                            Material mat = Material.matchMaterial(item.toUpperCase());
-                            String resolvedName = mat != null ? mat.name() : item;
-
-                            if (shopHandler != null && shopHandler.buy(player, resolvedName, amount)) {
-                                results.add("✅ Bought " + amount + " " + resolvedName.toLowerCase().replace("_", " "));
-                            } else {
-                                results.add("❌ Failed to buy " + amount + " " + resolvedName.toLowerCase().replace("_", " "));
-                            }
-                            return results;
-                        }
-                    }
-
-                    // Regular pattern match (not "buy" command)
+                if (lowerInput.contains(pattern.toLowerCase())) {
                     String resolved = applyPlaceholders(rule.response, player);
                     results.add(resolved);
                     break;
@@ -97,6 +95,15 @@ public class FunctionCallingLoader {
         }
 
         return results;
+    }
+
+    private String matchAlias(String word) {
+        for (String alias : FunctionCallingLoaderMCItem.MATERIAL_ALIASES.keySet()) {
+            if (alias.contains(word) || word.contains(alias)) {
+                return alias;
+            }
+        }
+        return null;
     }
 
     private String applyPlaceholders(String response, Player player) {
