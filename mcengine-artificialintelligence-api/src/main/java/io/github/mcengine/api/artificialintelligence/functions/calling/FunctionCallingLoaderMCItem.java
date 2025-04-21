@@ -14,7 +14,7 @@ public class FunctionCallingLoaderMCItem {
         Map.entry("polished diorite", Material.POLISHED_DIORITE), // 1:4
         Map.entry("andesite", Material.ANDESITE), // 1:5
         Map.entry("polished andesite", Material.POLISHED_ANDESITE), // 1:6
-        Map.entry("grass", Material.GRASS), // 2
+        /* Map.entry("grass", Material.GRASS), // 2 */
         Map.entry("dirt", Material.DIRT), // 3
         Map.entry("coarse dirt", Material.COARSE_DIRT), // 3:1
         Map.entry("podzol", Material.PODZOL), // 3:2
@@ -58,7 +58,7 @@ public class FunctionCallingLoaderMCItem {
         Map.entry("chiseled sandstone", Material.CHISELED_SANDSTONE), // 24:1
         Map.entry("smooth sandstone", Material.SMOOTH_SANDSTONE), // 24:2
         Map.entry("note block", Material.NOTE_BLOCK), // 25
-        Map.entry("bed", Material.BED), // 26
+        /* Map.entry("bed", Material.BED), // 26 */
         Map.entry("powered rail", Material.POWERED_RAIL), // 27
         Map.entry("detector rail", Material.DETECTOR_RAIL), // 28
         Map.entry("sticky piston", Material.STICKY_PISTON), // 29
@@ -156,7 +156,7 @@ public class FunctionCallingLoaderMCItem {
         Map.entry("jungle fence", Material.JUNGLE_FENCE), // 190
         Map.entry("acacia fence", Material.ACACIA_FENCE), // 192
         Map.entry("dark oak fence", Material.DARK_OAK_FENCE), // 191
-        Map.entry("bed", Material.BED), // 355
+        /* Map.entry("bed", Material.BED), // 355 */
         Map.entry("shield", Material.SHIELD) // 442
     );
 
