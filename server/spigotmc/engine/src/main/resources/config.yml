@@ -34,3 +34,6 @@ threadpool:
 
 conversation:
   keep: true
+
+shop:
+  type: EconomyShopGUI
