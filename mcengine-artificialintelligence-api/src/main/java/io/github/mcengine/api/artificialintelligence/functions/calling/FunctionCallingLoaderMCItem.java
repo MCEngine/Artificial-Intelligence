@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FunctionCallingLoaderMCItem {
+
     public static final Map<String, Material> MATERIAL_ALIASES = new HashMap<>();
 
     static {
@@ -27,5 +28,12 @@ public class FunctionCallingLoaderMCItem {
         MATERIAL_ALIASES.put("{bow}", Material.BOW);
         MATERIAL_ALIASES.put("{arrow}", Material.ARROW);
         MATERIAL_ALIASES.put("{shield}", Material.SHIELD);
+    }
+
+    public static String applyMaterialPlaceholders(String input) {
+        for (Map.Entry<String, Material> entry : MATERIAL_ALIASES.entrySet()) {
+            input = input.replace(entry.getKey(), entry.getValue().name());
+        }
+        return input;
     }
 }

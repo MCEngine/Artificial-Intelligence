@@ -52,11 +52,15 @@ public class FunctionCallingLoader {
         List<String> results = new ArrayList<>();
         String lowerInput = input.toLowerCase().trim();
 
+        // Replace item placeholders like {diamond} → DIAMOND
+        lowerInput = FunctionCallingLoaderMCItem.applyMaterialPlaceholders(lowerInput);
+
         for (FunctionRule rule : mergedRules) {
             for (String pattern : rule.match) {
-                String lowerPattern = pattern.toLowerCase();
+                String lowerPattern = FunctionCallingLoaderMCItem.applyMaterialPlaceholders(pattern.toLowerCase());
+
                 if (lowerInput.contains(lowerPattern) || lowerPattern.contains(lowerInput)) {
-                    // Check for auto-buy format: e.g., "buy diamond 3"
+                    // Check for auto-buy format
                     if (lowerInput.startsWith("buy ")) {
                         String[] parts = lowerInput.split("\\s+");
                         if (parts.length >= 2) {
@@ -71,8 +75,8 @@ public class FunctionCallingLoader {
                                 }
                             }
 
-                            // Use alias map to resolve Material and get the official name
-                            Material mat = FunctionCallingLoaderMCItem.MATERIAL_ALIASES.get(item.toLowerCase());
+                            // Try to resolve input using alias map (even if already uppercased)
+                            Material mat = Material.matchMaterial(item.toUpperCase());
                             String resolvedName = mat != null ? mat.name() : item;
 
                             if (shopHandler != null && shopHandler.buy(player, resolvedName, amount)) {
@@ -84,6 +88,7 @@ public class FunctionCallingLoader {
                         }
                     }
 
+                    // Regular pattern match (not "buy" command)
                     String resolved = applyPlaceholders(rule.response, player);
                     results.add(resolved);
                     break;
@@ -100,6 +105,8 @@ public class FunctionCallingLoader {
                 .replace("{player_uuid}", player.getUniqueId().toString());
 
         response = FunctionCallingLoaderTime.applyTimePlaceholders(response);
+        response = FunctionCallingLoaderMCItem.applyMaterialPlaceholders(response);
+
         return response;
     }
 }
