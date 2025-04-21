@@ -1,5 +1,6 @@
 package io.github.mcengine.api.artificialintelligence;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import io.github.mcengine.api.artificialintelligence.IMCEngineArtificialIntelligenceApi;
@@ -17,6 +18,29 @@ public class FunctionCallingLoader {
 
     private final List<FunctionRule> mergedRules = new ArrayList<>();
     private final IShopHandler shopHandler;
+
+    public static final Map<String, Material> MATERIAL_ALIASES = new HashMap<>();
+
+    static {
+        MATERIAL_ALIASES.put("diamond", Material.DIAMOND);
+        MATERIAL_ALIASES.put("gold ingot", Material.GOLD_INGOT);
+        MATERIAL_ALIASES.put("iron sword", Material.IRON_SWORD);
+        MATERIAL_ALIASES.put("golden apple", Material.GOLDEN_APPLE);
+        MATERIAL_ALIASES.put("emerald", Material.EMERALD);
+        MATERIAL_ALIASES.put("stone pickaxe", Material.STONE_PICKAXE);
+        MATERIAL_ALIASES.put("torch", Material.TORCH);
+        MATERIAL_ALIASES.put("bread", Material.BREAD);
+        MATERIAL_ALIASES.put("steak", Material.COOKED_BEEF);
+        MATERIAL_ALIASES.put("carrot", Material.CARROT);
+        MATERIAL_ALIASES.put("potato", Material.POTATO);
+        MATERIAL_ALIASES.put("obsidian", Material.OBSIDIAN);
+        MATERIAL_ALIASES.put("netherite ingot", Material.NETHERITE_INGOT);
+        MATERIAL_ALIASES.put("book", Material.BOOK);
+        MATERIAL_ALIASES.put("chest", Material.CHEST);
+        MATERIAL_ALIASES.put("bow", Material.BOW);
+        MATERIAL_ALIASES.put("arrow", Material.ARROW);
+        MATERIAL_ALIASES.put("shield", Material.SHIELD);
+    }
 
     public FunctionCallingLoader(Plugin plugin) {
         String dbType = plugin.getConfig().getString("db.type", "json").toLowerCase();
@@ -49,7 +73,7 @@ public class FunctionCallingLoader {
     public List<String> match(Player player, String input) {
         List<String> results = new ArrayList<>();
         String lowerInput = input.toLowerCase().trim();
-    
+
         for (FunctionRule rule : mergedRules) {
             for (String pattern : rule.match) {
                 String lowerPattern = pattern.toLowerCase();
@@ -60,7 +84,7 @@ public class FunctionCallingLoader {
                         if (parts.length >= 2) {
                             String item = parts[1];
                             int amount = 1;
-    
+
                             if (parts.length >= 3) {
                                 try {
                                     amount = Integer.parseInt(parts[2]);
@@ -68,7 +92,7 @@ public class FunctionCallingLoader {
                                     amount = 1; // default if invalid
                                 }
                             }
-    
+
                             if (shopHandler != null && shopHandler.buy(player, item, amount)) {
                                 results.add("✅ Bought " + amount + " " + item);
                             } else {
@@ -77,7 +101,7 @@ public class FunctionCallingLoader {
                             return results;
                         }
                     }
-    
+
                     // If not a buy command, proceed as normal
                     String resolved = applyPlaceholders(rule.response, player);
                     results.add(resolved);
@@ -85,7 +109,7 @@ public class FunctionCallingLoader {
                 }
             }
         }
-    
+
         return results;
     }
 
