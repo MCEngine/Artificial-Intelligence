@@ -24,7 +24,7 @@ public class MCEngineArtificialIntelligenceApi implements IMCEngineArtificialInt
      * @throws IllegalArgumentException If the configured AI type is not supported.
      */
     public MCEngineArtificialIntelligenceApi(Plugin plugin) {
-        String aiType = plugin.getConfig().getString("aiType", "deepseek");
+        String aiType = plugin.getConfig().getString("ai.type", "deepseek");
 
         switch (aiType.toLowerCase()) {
             case "custom":

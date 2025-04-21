@@ -1,14 +1,14 @@
 enable: false
 
-dbType: json
-
 db:
+  type: json
+
   json:
     path: datas
 
-aiType: deepseek
-
 ai:
+  type: deepseek
+
   custom:
     url: http://localhost:11434/v1/chat/completions
     token:
