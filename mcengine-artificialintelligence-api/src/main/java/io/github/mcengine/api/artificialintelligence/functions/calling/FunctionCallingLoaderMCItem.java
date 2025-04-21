@@ -19,9 +19,53 @@ public class FunctionCallingLoaderMCItem {
         Map.entry("coarse dirt", Material.COARSE_DIRT), // 3:1
         Map.entry("podzol", Material.PODZOL), // 3:2
         Map.entry("cobblestone", Material.COBBLESTONE), // 4
+        Map.entry("oak planks", Material.OAK_PLANKS), // 5
+        Map.entry("spruce planks", Material.SPRUCE_PLANKS), // 5:1
+        Map.entry("birch planks", Material.BIRCH_PLANKS), // 5:2
+        Map.entry("jungle planks", Material.JUNGLE_PLANKS), // 5:3
+        Map.entry("acacia planks", Material.ACACIA_PLANKS), // 5:4
+        Map.entry("dark oak planks", Material.DARK_OAK_PLANKS), // 5:5
+        Map.entry("oak sapling", Material.OAK_SAPLING), // 6
+        Map.entry("spruce sapling", Material.SPRUCE_SAPLING), // 6:1
+        Map.entry("birch sapling", Material.BIRCH_SAPLING), // 6:2
+        Map.entry("jungle sapling", Material.JUNGLE_SAPLING), // 6:3
+        Map.entry("acacia sapling", Material.ACACIA_SAPLING), // 6:4
+        Map.entry("dark oak sapling", Material.DARK_OAK_SAPLING), // 6:5
+        Map.entry("bedrock", Material.BEDROCK), // 7
+        Map.entry("water", Material.WATER), // 9
+        Map.entry("lava", Material.LAVA), // 11
+        Map.entry("sand", Material.SAND), // 12
+        Map.entry("red sand", Material.RED_SAND), // 12:1
+        Map.entry("gravel", Material.GRAVEL), // 13
         Map.entry("gold ore", Material.GOLD_ORE), // 14
         Map.entry("iron ore", Material.IRON_ORE), // 15
         Map.entry("coal ore", Material.COAL_ORE), // 16
+        Map.entry("oak log", Material.OAK_LOG), // 17
+        Map.entry("spruce log", Material.SPRUCE_LOG), // 17:1
+        Map.entry("birch log", Material.BIRCH_LOG), // 17:2
+        Map.entry("jungle log", Material.JUNGLE_LOG), // 17:3
+        Map.entry("oak leaves", Material.OAK_LEAVES), // 18
+        Map.entry("spruce leaves", Material.SPRUCE_LEAVES), // 18:1
+        Map.entry("birch leaves", Material.BIRCH_LEAVES), // 18:2
+        Map.entry("jungle leaves", Material.JUNGLE_LEAVES), // 18:3
+        Map.entry("sponge", Material.SPONGE), // 19
+        Map.entry("wet sponge", Material.WET_SPONGE), // 19:1
+        Map.entry("glass", Material.GLASS), // 20
+        Map.entry("lapis ore", Material.LAPIS_ORE), // 21
+        Map.entry("lapis block", Material.LAPIS_BLOCK), // 22
+        Map.entry("dispenser", Material.DISPENSER), // 23
+        Map.entry("sandstone", Material.SANDSTONE), // 24
+        Map.entry("chiseled sandstone", Material.CHISELED_SANDSTONE), // 24:1
+        Map.entry("smooth sandstone", Material.SMOOTH_SANDSTONE), // 24:2
+        Map.entry("note block", Material.NOTE_BLOCK), // 25
+        Map.entry("bed", Material.BED), // 26
+        Map.entry("powered rail", Material.POWERED_RAIL), // 27
+        Map.entry("detector rail", Material.DETECTOR_RAIL), // 28
+        Map.entry("sticky piston", Material.STICKY_PISTON), // 29
+        Map.entry("cobweb", Material.COBWEB), // 30
+        Map.entry("dead bush", Material.DEAD_BUSH), // 32
+        Map.entry("piston", Material.PISTON), // 33
+        Map.entry("piston head", Material.PISTON_HEAD), // 34
         Map.entry("white wool", Material.WHITE_WOOL), // 35
         Map.entry("orange wool", Material.ORANGE_WOOL), // 35:1
         Map.entry("magenta wool", Material.MAGENTA_WOOL), // 35:2
@@ -36,19 +80,36 @@ public class FunctionCallingLoaderMCItem {
         Map.entry("blue wool", Material.BLUE_WOOL), // 35:11
         Map.entry("brown wool", Material.BROWN_WOOL), // 35:12
         Map.entry("green wool", Material.GREEN_WOOL), // 35:13
-        Map.entry("red wool", Material.RED_WOOL), // 35:15
+        Map.entry("red wool", Material.RED_WOOL), // 35:14
         Map.entry("black wool", Material.BLACK_WOOL), // 35:15
+        Map.entry("dandelion", Material.DANDELION), // 37
+        Map.entry("poppy", Material.POPPY), // 38
+        Map.entry("blue orchid", Material.BLUE_ORCHID), // 38:1
+        Map.entry("allium", Material.ALLIUM), // 38:2
+        Map.entry("azure bluet", Material.AZURE_BLUET), // 38:3
+        Map.entry("red tulip", Material.RED_TULIP), // 38:4
+        Map.entry("orange tulip", Material.ORANGE_TULIP), // 38:5
+        Map.entry("white tulip", Material.WHITE_TULIP), // 38:6
+        Map.entry("pink tulip", Material.PINK_TULIP), // 38:7
+        Map.entry("oxeye daisy", Material.OXEYE_DAISY), // 38:8
+        Map.entry("brown mushroom", Material.BROWN_MUSHROOM), // 39
+        Map.entry("red mushroom", Material.RED_MUSHROOM), // 40
+        Map.entry("gold block", Material.GOLD_BLOCK), // 41
         Map.entry("iron block", Material.IRON_BLOCK), // 42
-        Map.entry("brick block", Material.BRICKS), // 45
-        Map.entry("bookshelf", Material.BOOKSHELF), // 47
-        Map.entry("mossy cobblestone", Material.MOSSY_COBBLESTONE), // 48
-        Map.entry("obsidian", Material.OBSIDIAN), // 49
         Map.entry("torch", Material.TORCH), // 50
         Map.entry("diamond ore", Material.DIAMOND_ORE), // 56
         Map.entry("diamond block", Material.DIAMOND_BLOCK), // 57
         Map.entry("crafting table", Material.CRAFTING_TABLE), // 58
         Map.entry("wheat", Material.WHEAT), // 59
-        Map.entry("furnace", Material.FURNACE), // 60
+        Map.entry("farmland", Material.FARMLAND), // 60
+        Map.entry("furnace", Material.FURNACE), // 61
+        Map.entry("lit furnace", Material.FURNACE), // 62
+        Map.entry("ladder", Material.LADDER), // 65
+        Map.entry("rail", Material.RAIL), // 66
+        Map.entry("cobblestone stairs", Material.COBBLESTONE_STAIRS), // 67
+        Map.entry("lever", Material.LEVER), // 69
+        Map.entry("stone pressure plate", Material.STONE_PRESSURE_PLATE), // 70
+        Map.entry("iron door", Material.IRON_DOOR), // 71
         Map.entry("wooden pressure plate", Material.OAK_PRESSURE_PLATE), // 72
         Map.entry("redstone ore", Material.REDSTONE_ORE), // 73
         Map.entry("redstone torch", Material.REDSTONE_TORCH), // 76
@@ -95,7 +156,8 @@ public class FunctionCallingLoaderMCItem {
         Map.entry("jungle fence", Material.JUNGLE_FENCE), // 190
         Map.entry("acacia fence", Material.ACACIA_FENCE), // 192
         Map.entry("dark oak fence", Material.DARK_OAK_FENCE), // 191
-        Map.entry("bed", Material.BED) // 355
+        Map.entry("bed", Material.BED), // 355
+        Map.entry("shield", Material.SHIELD) // 442
     );
 
     public static String applyMaterialPlaceholders(String input) {
