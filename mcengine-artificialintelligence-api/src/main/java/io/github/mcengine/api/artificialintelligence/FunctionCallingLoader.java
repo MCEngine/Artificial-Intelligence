@@ -1,46 +1,22 @@
 package io.github.mcengine.api.artificialintelligence;
 
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import io.github.mcengine.api.artificialintelligence.IMCEngineArtificialIntelligenceApi;
-import io.github.mcengine.api.artificialintelligence.functions.calling.IFunctionCallingLoader;
 import io.github.mcengine.api.artificialintelligence.functions.calling.FunctionRule;
+import io.github.mcengine.api.artificialintelligence.functions.calling.IFunctionCallingLoader;
 import io.github.mcengine.api.artificialintelligence.functions.calling.json.FunctionCallingJson;
+import io.github.mcengine.api.artificialintelligence.functions.calling.FunctionCallingLoaderTime;
 import io.github.mcengine.api.artificialintelligence.shop.IShopHandler;
 import io.github.mcengine.api.artificialintelligence.shop.economyshopgui.EconomyShopGUIHandler;
 
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class FunctionCallingLoader {
 
     private final List<FunctionRule> mergedRules = new ArrayList<>();
     private final IShopHandler shopHandler;
-
-    public static final Map<String, Material> MATERIAL_ALIASES = new HashMap<>();
-
-    static {
-        MATERIAL_ALIASES.put("diamond", Material.DIAMOND);
-        MATERIAL_ALIASES.put("gold ingot", Material.GOLD_INGOT);
-        MATERIAL_ALIASES.put("iron sword", Material.IRON_SWORD);
-        MATERIAL_ALIASES.put("golden apple", Material.GOLDEN_APPLE);
-        MATERIAL_ALIASES.put("emerald", Material.EMERALD);
-        MATERIAL_ALIASES.put("stone pickaxe", Material.STONE_PICKAXE);
-        MATERIAL_ALIASES.put("torch", Material.TORCH);
-        MATERIAL_ALIASES.put("bread", Material.BREAD);
-        MATERIAL_ALIASES.put("steak", Material.COOKED_BEEF);
-        MATERIAL_ALIASES.put("carrot", Material.CARROT);
-        MATERIAL_ALIASES.put("potato", Material.POTATO);
-        MATERIAL_ALIASES.put("obsidian", Material.OBSIDIAN);
-        MATERIAL_ALIASES.put("netherite ingot", Material.NETHERITE_INGOT);
-        MATERIAL_ALIASES.put("book", Material.BOOK);
-        MATERIAL_ALIASES.put("chest", Material.CHEST);
-        MATERIAL_ALIASES.put("bow", Material.BOW);
-        MATERIAL_ALIASES.put("arrow", Material.ARROW);
-        MATERIAL_ALIASES.put("shield", Material.SHIELD);
-    }
 
     public FunctionCallingLoader(Plugin plugin) {
         String dbType = plugin.getConfig().getString("db.type", "json").toLowerCase();
@@ -78,7 +54,6 @@ public class FunctionCallingLoader {
             for (String pattern : rule.match) {
                 String lowerPattern = pattern.toLowerCase();
                 if (lowerInput.contains(lowerPattern) || lowerPattern.contains(lowerInput)) {
-                    // Check for auto-buy format: e.g., "buy diamond 3"
                     if (lowerInput.startsWith("buy ")) {
                         String[] parts = lowerInput.split("\\s+");
                         if (parts.length >= 2) {
@@ -89,7 +64,7 @@ public class FunctionCallingLoader {
                                 try {
                                     amount = Integer.parseInt(parts[2]);
                                 } catch (NumberFormatException e) {
-                                    amount = 1; // default if invalid
+                                    amount = 1;
                                 }
                             }
 
@@ -102,7 +77,6 @@ public class FunctionCallingLoader {
                         }
                     }
 
-                    // If not a buy command, proceed as normal
                     String resolved = applyPlaceholders(rule.response, player);
                     results.add(resolved);
                     break;
@@ -114,62 +88,11 @@ public class FunctionCallingLoader {
     }
 
     private String applyPlaceholders(String response, Player player) {
-        // Base placeholders
         response = response
                 .replace("{player_name}", player.getName())
-                .replace("{player_uuid}", player.getUniqueId().toString())
-                .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
-                .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")))
-                .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")))
-                .replace("{time_server}", getFormattedTime(TimeZone.getDefault()));
+                .replace("{player_uuid}", player.getUniqueId().toString());
 
-        // Named time zones
-        Map<String, String> namedZones = Map.ofEntries(
-                Map.entry("{time_new_york}", getFormattedTime("America/New_York")),
-                Map.entry("{time_london}", getFormattedTime("Europe/London")),
-                Map.entry("{time_tokyo}", getFormattedTime("Asia/Tokyo")),
-                Map.entry("{time_bangkok}", getFormattedTime("Asia/Bangkok")),
-                Map.entry("{time_sydney}", getFormattedTime("Australia/Sydney")),
-                Map.entry("{time_paris}", getFormattedTime("Europe/Paris")),
-                Map.entry("{time_berlin}", getFormattedTime("Europe/Berlin")),
-                Map.entry("{time_singapore}", getFormattedTime("Asia/Singapore")),
-                Map.entry("{time_los_angeles}", getFormattedTime("America/Los_Angeles")),
-                Map.entry("{time_toronto}", getFormattedTime("America/Toronto"))
-        );
-        for (Map.Entry<String, String> entry : namedZones.entrySet()) {
-            response = response.replace(entry.getKey(), entry.getValue());
-        }
-
-        // UTC & GMT offset zones dynamically
-        for (int hour = -12; hour <= 14; hour++) {
-            for (int min : new int[]{0, 30, 45}) {
-                String utcLabel = getZoneLabel("utc", hour, min);
-                String gmtLabel = getZoneLabel("gmt", hour, min);
-                TimeZone tz = TimeZone.getTimeZone(String.format("GMT%+03d:%02d", hour, min));
-                String time = getFormattedTime(tz);
-                response = response.replace(utcLabel, time);
-                response = response.replace(gmtLabel, time);
-            }
-        }
-
+        response = FunctionCallingLoaderTime.applyTimePlaceholders(response);
         return response;
-    }
-
-    private String getFormattedTime(TimeZone timeZone) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        sdf.setTimeZone(timeZone);
-        return sdf.format(new Date());
-    }
-
-    private String getFormattedTime(String zoneId) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone(zoneId));
-        return sdf.format(new Date());
-    }
-
-    private String getZoneLabel(String prefix, int hour, int minute) {
-        String sign = hour >= 0 ? "plus" : "minus";
-        int absHour = Math.abs(hour);
-        return String.format("{time_%s_%s_%02d_%02d}", prefix, sign, absHour, minute);
     }
 }
