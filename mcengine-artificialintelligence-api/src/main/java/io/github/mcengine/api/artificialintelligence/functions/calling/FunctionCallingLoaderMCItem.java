@@ -156,6 +156,27 @@ public class FunctionCallingLoaderMCItem {
         Map.entry("jungle fence", Material.JUNGLE_FENCE), // 190
         Map.entry("acacia fence", Material.ACACIA_FENCE), // 192
         Map.entry("dark oak fence", Material.DARK_OAK_FENCE), // 191
+        Map.entry("red nether brick", Material.RED_NETHER_BRICKS), // 215
+        Map.entry("bone block", Material.BONE_BLOCK), // 216
+        Map.entry("structure void", Material.STRUCTURE_VOID), // 217
+        Map.entry("observer", Material.OBSERVER), // 218
+        Map.entry("shulker box", Material.SHULKER_BOX), // 219
+        Map.entry("white shulker box", Material.WHITE_SHULKER_BOX), // 220
+        Map.entry("orange shulker box", Material.ORANGE_SHULKER_BOX), // 221
+        Map.entry("magenta shulker box", Material.MAGENTA_SHULKER_BOX), // 222
+        Map.entry("light blue shulker box", Material.LIGHT_BLUE_SHULKER_BOX), // 223
+        Map.entry("yellow shulker box", Material.YELLOW_SHULKER_BOX), // 224
+        Map.entry("lime shulker box", Material.LIME_SHULKER_BOX), // 225
+        Map.entry("pink shulker box", Material.PINK_SHULKER_BOX), // 226
+        Map.entry("gray shulker box", Material.GRAY_SHULKER_BOX), // 227
+        Map.entry("light gray shulker box", Material.LIGHT_GRAY_SHULKER_BOX), // 228
+        Map.entry("cyan shulker box", Material.CYAN_SHULKER_BOX), // 229
+        Map.entry("purple shulker box", Material.PURPLE_SHULKER_BOX), // 230
+        Map.entry("blue shulker box", Material.BLUE_SHULKER_BOX), // 231
+        Map.entry("brown shulker box", Material.BROWN_SHULKER_BOX), // 232
+        Map.entry("green shulker box", Material.GREEN_SHULKER_BOX), // 233
+        Map.entry("red shulker box", Material.RED_SHULKER_BOX), // 234
+        Map.entry("black shulker box", Material.BLACK_SHULKER_BOX), // 235
         /* Map.entry("bed", Material.BED), // 355 */
         Map.entry("shield", Material.SHIELD) // 442
     );
