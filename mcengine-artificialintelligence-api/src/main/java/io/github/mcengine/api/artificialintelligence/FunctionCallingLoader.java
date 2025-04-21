@@ -6,6 +6,8 @@ import io.github.mcengine.api.artificialintelligence.IMCEngineArtificialIntellig
 import io.github.mcengine.api.artificialintelligence.functions.calling.IFunctionCallingLoader;
 import io.github.mcengine.api.artificialintelligence.functions.calling.FunctionRule;
 import io.github.mcengine.api.artificialintelligence.functions.calling.json.FunctionCallingJson;
+import io.github.mcengine.api.artificialintelligence.shop.IShopHandler;
+import io.github.mcengine.api.artificialintelligence.shop.economyshopgui.EconomyShopGUIHandler;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -32,30 +34,58 @@ public class FunctionCallingLoader {
         List<FunctionRule> rules = orm.loadFunctionRules();
         if (rules != null) mergedRules.addAll(rules);
 
+        IShopHandler handler = null;
         if (plugin.getConfig().getBoolean("shop.enable", true)) {
             String shopType = plugin.getConfig().getString("shop.type", "EconomyShopGUI");
             switch (shopType.toLowerCase()) {
-                case "economyshopgui" -> this.shopHandler = new EconomyShopGUIHandler();
-                default -> this.shopHandler = new EconomyShopGUIHandler();
+                case "economyshopgui" -> handler = new EconomyShopGUIHandler();
+                // case "quickshop" -> handler = new QuickShopReremakeHandler();
+                default -> handler = new EconomyShopGUIHandler();
             }
         }
+        this.shopHandler = handler;
     }
 
     public List<String> match(Player player, String input) {
         List<String> results = new ArrayList<>();
         String lowerInput = input.toLowerCase().trim();
-
+    
         for (FunctionRule rule : mergedRules) {
             for (String pattern : rule.match) {
                 String lowerPattern = pattern.toLowerCase();
                 if (lowerInput.contains(lowerPattern) || lowerPattern.contains(lowerInput)) {
+                    // Check for auto-buy format: e.g., "buy diamond 3"
+                    if (lowerInput.startsWith("buy ")) {
+                        String[] parts = lowerInput.split("\\s+");
+                        if (parts.length >= 2) {
+                            String item = parts[1];
+                            int amount = 1;
+    
+                            if (parts.length >= 3) {
+                                try {
+                                    amount = Integer.parseInt(parts[2]);
+                                } catch (NumberFormatException e) {
+                                    amount = 1; // default if invalid
+                                }
+                            }
+    
+                            if (shopHandler != null && shopHandler.buy(player, item, amount)) {
+                                results.add("✅ Bought " + amount + " " + item);
+                            } else {
+                                results.add("❌ Failed to buy " + amount + " " + item);
+                            }
+                            return results;
+                        }
+                    }
+    
+                    // If not a buy command, proceed as normal
                     String resolved = applyPlaceholders(rule.response, player);
                     results.add(resolved);
                     break;
                 }
             }
         }
-
+    
         return results;
     }
 

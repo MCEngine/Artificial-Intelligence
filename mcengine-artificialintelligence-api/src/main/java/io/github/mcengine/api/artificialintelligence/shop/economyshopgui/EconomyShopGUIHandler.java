@@ -16,7 +16,14 @@ public class EconomyShopGUIHandler implements IShopHandler {
 
     static {
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-            economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
+            var registration = Bukkit.getServicesManager().getRegistration(Economy.class);
+            if (registration != null) {
+                economy = registration.getProvider();
+            } else {
+                Bukkit.getLogger().warning("[MCEngineArtificialIntelligence] Vault is installed but no Economy provider found.");
+            }
+        } else {
+            Bukkit.getLogger().warning("[MCEngineArtificialIntelligence] Vault plugin not found.");
         }
     }
 
