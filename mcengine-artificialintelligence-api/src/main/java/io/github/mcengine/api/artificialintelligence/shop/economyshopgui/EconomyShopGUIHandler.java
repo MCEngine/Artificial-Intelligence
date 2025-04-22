@@ -9,23 +9,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import io.github.mcengine.api.artificialintelligence.shop.IShopHandler;
 import io.github.mcengine.api.artificialintelligence.functions.calling.FunctionCallingLoaderMCItem;
+import io.github.mcengine.api.artificialintelligence.util.PluginHook;
 
 public class EconomyShopGUIHandler implements IShopHandler {
 
-    private static Economy economy;
-
-    static {
-        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-            var registration = Bukkit.getServicesManager().getRegistration(Economy.class);
-            if (registration != null) {
-                economy = registration.getProvider();
-            } else {
-                Bukkit.getLogger().warning("[MCEngineArtificialIntelligence] Vault is installed but no Economy provider found.");
-            }
-        } else {
-            Bukkit.getLogger().warning("[MCEngineArtificialIntelligence] Vault plugin not found.");
-        }
-    }
+    private static final Economy economy = PluginHook.getEconomy();
 
     @Override
     public boolean buy(Player player, String itemName, int amount) {
@@ -34,9 +22,8 @@ public class EconomyShopGUIHandler implements IShopHandler {
             return false;
         }
 
-        // Resolve material using alias first, then fallback to Bukkit Material
         Material material = FunctionCallingLoaderMCItem.MATERIAL_ALIASES.getOrDefault(
-            itemName.toLowerCase(), 
+            itemName.toLowerCase(),
             Material.matchMaterial(itemName.toUpperCase().replace(" ", "_"))
         );
 
