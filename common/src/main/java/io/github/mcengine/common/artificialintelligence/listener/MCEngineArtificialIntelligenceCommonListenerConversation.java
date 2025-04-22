@@ -38,8 +38,13 @@ public class MCEngineArtificialIntelligenceCommonListenerConversation implements
 
         event.setCancelled(true);
         event.getRecipients().clear();
-        String message = event.getMessage().trim();
 
+        if (ConversationManager.isWaiting(player)) {
+            player.sendMessage(ChatColor.RED + "⏳ Please wait for the AI to respond before sending another message.");
+            return;
+        }
+
+        String message = event.getMessage().trim();
         player.sendMessage(ChatColor.GRAY + "[You → AI]: " + ChatColor.WHITE + message);
 
         if (message.equalsIgnoreCase("quit")) {
@@ -53,6 +58,8 @@ public class MCEngineArtificialIntelligenceCommonListenerConversation implements
             return;
         }
 
+        ConversationManager.setWaiting(player, true);
+
         StringBuilder contextInfo = new StringBuilder();
         List<String> matchedResponses = functionLoader.match(player, message);
         for (String res : matchedResponses) {
@@ -65,7 +72,6 @@ public class MCEngineArtificialIntelligenceCommonListenerConversation implements
         }
 
         String inputToAI;
-
         if (keepConversation) {
             ConversationManager.append(player, userInput);
             inputToAI = ConversationManager.get(player);
@@ -83,6 +89,7 @@ public class MCEngineArtificialIntelligenceCommonListenerConversation implements
                 @Override
                 public void run() {
                     player.sendMessage(ChatColor.GREEN + "[AI]: " + ChatColor.WHITE + response);
+                    ConversationManager.setWaiting(player, false);
                 }
             }.runTask(plugin);
         });
