@@ -1,36 +1,75 @@
 package io.github.mcengine.api.artificialintelligence.functions.calling;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.jar.JarFile;
 
 public class FunctionCallingLoaderTime {
 
-    public static final Map<String, String> namedZones = Map.ofEntries(
-            Map.entry("{time_new_york}", getFormattedTime("America/New_York")),
-            Map.entry("{time_london}", getFormattedTime("Europe/London")),
-            Map.entry("{time_tokyo}", getFormattedTime("Asia/Tokyo")),
-            Map.entry("{time_bangkok}", getFormattedTime("Asia/Bangkok")),
-            Map.entry("{time_sydney}", getFormattedTime("Australia/Sydney")),
-            Map.entry("{time_paris}", getFormattedTime("Europe/Paris")),
-            Map.entry("{time_berlin}", getFormattedTime("Europe/Berlin")),
-            Map.entry("{time_singapore}", getFormattedTime("Asia/Singapore")),
-            Map.entry("{time_los_angeles}", getFormattedTime("America/Los_Angeles")),
-            Map.entry("{time_toronto}", getFormattedTime("America/Toronto"))
-    );
+    public static final Map<String, String> namedZones = new HashMap<>();
+
+    static {
+        try {
+            Enumeration<URL> urls = FunctionCallingLoaderTime.class.getClassLoader().getResources("timezones");
+            while (urls.hasMoreElements()) {
+                URL dirUrl = urls.nextElement();
+                String protocol = dirUrl.getProtocol();
+
+                if (protocol.equals("jar")) {
+                    String path = dirUrl.getPath();
+                    String jarPath = path.substring(5, path.indexOf("!"));
+                    try (JarFile jar = new JarFile(jarPath)) {
+                        jar.stream()
+                            .filter(e -> e.getName().startsWith("timezones/") && e.getName().endsWith(".json"))
+                            .forEach(e -> loadTimezoneFile(e.getName()));
+                    }
+                } else if (protocol.equals("file")) {
+                    File folder = new File(dirUrl.toURI());
+                    File[] files = folder.listFiles((dir, name) -> name.endsWith(".json"));
+                    if (files != null) {
+                        for (File file : files) {
+                            loadTimezoneFile("timezones/" + file.getName());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void loadTimezoneFile(String path) {
+        try (InputStream stream = FunctionCallingLoaderTime.class.getClassLoader().getResourceAsStream(path)) {
+            if (stream == null) return;
+
+            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+            Map<String, String> raw = new Gson().fromJson(reader, new TypeToken<Map<String, String>>() {}.getType());
+
+            for (Map.Entry<String, String> entry : raw.entrySet()) {
+                namedZones.put(entry.getKey(), getFormattedTime(entry.getValue()));
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to load timezone file: " + path);
+            e.printStackTrace();
+        }
+    }
 
     public static String applyTimePlaceholders(String response) {
-        // Standard time zones
         response = response
                 .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
                 .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")))
                 .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")));
 
-        // Named zones
         for (Map.Entry<String, String> entry : namedZones.entrySet()) {
             response = response.replace(entry.getKey(), entry.getValue());
         }
 
-        // Offset time zones
         for (int hour = -12; hour <= 14; hour++) {
             for (int min : new int[]{0, 30, 45}) {
                 String utcLabel = getZoneLabel("utc", hour, min);
@@ -52,9 +91,7 @@ public class FunctionCallingLoaderTime {
     }
 
     public static String getFormattedTime(String zoneId) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone(zoneId));
-        return sdf.format(new Date());
+        return getFormattedTime(TimeZone.getTimeZone(zoneId));
     }
 
     public static String getZoneLabel(String prefix, int hour, int minute) {
