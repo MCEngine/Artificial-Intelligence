@@ -1,0 +1,12 @@
+{
+    "{time_new_york}": "America/New_York",
+    "{time_london}": "Europe/London",
+    "{time_tokyo}": "Asia/Tokyo",
+    "{time_bangkok}": "Asia/Bangkok",
+    "{time_sydney}": "Australia/Sydney",
+    "{time_paris}": "Europe/Paris",
+    "{time_berlin}": "Europe/Berlin",
+    "{time_singapore}": "Asia/Singapore",
+    "{time_los_angeles}": "America/Los_Angeles",
+    "{time_toronto}": "America/Toronto"
+}
