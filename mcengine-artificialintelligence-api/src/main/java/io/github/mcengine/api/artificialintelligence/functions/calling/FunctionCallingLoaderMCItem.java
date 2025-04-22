@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class FunctionCallingLoaderMCItem {
 
+    // https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
     public static final Map<String, Material> MATERIAL_ALIASES = Map.ofEntries(
         Map.entry("acacia boat", Material.ACACIA_BOAT),
         Map.entry("acacia button", Material.ACACIA_BUTTON),
