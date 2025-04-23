@@ -32,6 +32,8 @@ public class MCEngineArtificialIntelligenceApi {
 
         // Load FunctionCallingLoader for addon support
         this.functionCallingLoader = new FunctionCallingLoader(plugin);
+
+        loadAddons(plugin);
     }
 
     /**
