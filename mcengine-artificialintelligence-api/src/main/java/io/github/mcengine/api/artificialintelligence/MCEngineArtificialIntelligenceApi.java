@@ -3,6 +3,15 @@ package io.github.mcengine.api.artificialintelligence;
 import io.github.mcengine.api.artificialintelligence.FunctionCallingLoader;
 import io.github.mcengine.api.artificialintelligence.model.*;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.Logger;
+
 import org.bukkit.plugin.Plugin;
 
 public class MCEngineArtificialIntelligenceApi {
@@ -37,5 +46,59 @@ public class MCEngineArtificialIntelligenceApi {
 
     public FunctionCallingLoader getFunctionCallingLoader() {
         return this.functionCallingLoader;
+    }
+
+    private void loadAddons(Plugin plugin) {
+        Logger logger = plugin.getLogger();
+        File addonsFolder = new File(plugin.getDataFolder(), "addons");
+
+        if (!addonsFolder.exists() && !addonsFolder.mkdirs()) {
+            logger.warning("Could not create addons directory.");
+            return;
+        }
+
+        File[] files = addonsFolder.listFiles((f) -> f.isFile() && f.getName().endsWith(".jar"));
+        if (files == null || files.length == 0) {
+            logger.info("No addons found.");
+            return;
+        }
+
+        for (File file : files) {
+            try (URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.getClass().getClassLoader());
+                 JarFile jar = new JarFile(file)) {
+
+                Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    String name = entry.getName();
+
+                    if (!name.endsWith(".class") || name.contains("$")) continue;
+
+                    String className = name.replace("/", ".").replace(".class", "");
+
+                    try {
+                        Class<?> clazz = cl.loadClass(className);
+
+                        Method onLoadMethod = null;
+                        try {
+                            onLoadMethod = clazz.getMethod("onLoad", MCEngineArtificialIntelligenceApi.class);
+                        } catch (NoSuchMethodException ignored) {
+                        }
+
+                        if (onLoadMethod != null && !clazz.isInterface() && !java.lang.reflect.Modifier.isAbstract(clazz.getModifiers())) {
+                            Object instance = clazz.getDeclaredConstructor().newInstance();
+                            onLoadMethod.invoke(instance, this);
+                            logger.info("Addon loaded: " + className);
+                        }
+
+                    } catch (Throwable e) {
+                        logger.warning("Failed to load class from addon: " + className);
+                    }
+                }
+            } catch (Exception e) {
+                logger.warning("Error loading addon JAR: " + file.getName());
+                e.printStackTrace();
+            }
+        }
     }
 }

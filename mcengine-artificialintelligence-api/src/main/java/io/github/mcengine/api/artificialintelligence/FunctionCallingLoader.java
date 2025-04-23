@@ -50,17 +50,28 @@ public class FunctionCallingLoader {
         return results;
     }
 
+    public void registerRule(FunctionRule rule) {
+        this.mergedRules.add(rule);
+    }
+
+    public void registerRules(List<FunctionRule> rules) {
+        if (rules != null) {
+            this.mergedRules.addAll(rules);
+        }
+    }
+
+    public List<FunctionRule> getRules() {
+        return Collections.unmodifiableList(this.mergedRules);
+    }
+
     private String applyPlaceholders(String response, Player player) {
-        // Base placeholders
         response = response
                 .replace("{player_name}", player.getName())
                 .replace("{player_uuid}", player.getUniqueId().toString())
                 .replace("{time_server}", getFormattedTime(TimeZone.getDefault()))
                 .replace("{time_utc}", getFormattedTime(TimeZone.getTimeZone("UTC")))
-                .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")))
-                .replace("{time_server}", getFormattedTime(TimeZone.getDefault()));
+                .replace("{time_gmt}", getFormattedTime(TimeZone.getTimeZone("GMT")));
 
-        // Named time zones
         Map<String, String> namedZones = Map.ofEntries(
                 Map.entry("{time_new_york}", getFormattedTime("America/New_York")),
                 Map.entry("{time_london}", getFormattedTime("Europe/London")),
@@ -77,7 +88,6 @@ public class FunctionCallingLoader {
             response = response.replace(entry.getKey(), entry.getValue());
         }
 
-        // UTC & GMT offset zones dynamically
         for (int hour = -12; hour <= 14; hour++) {
             for (int min : new int[]{0, 30, 45}) {
                 String utcLabel = getZoneLabel("utc", hour, min);
